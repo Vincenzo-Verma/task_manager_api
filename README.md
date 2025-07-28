@@ -31,32 +31,38 @@ Before running this project, make sure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd TaskManagementSystem
+   git clone https://github.com/Vincenzo-Verma/task_manager_api.git
+   cd task_manager_api
    ```
 
-2. **Install dependencies using pipenv**
+2. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env file with your configuration
+   ```
+
+3. **Install dependencies using pipenv**
    ```bash
    pipenv install
    ```
 
-3. **Activate the virtual environment**
+4. **Activate the virtual environment**
    ```bash
    pipenv shell
    ```
 
-4. **Run database migrations**
+5. **Run database migrations**
    ```bash
    python manage.py makemigrations
    python manage.py migrate
    ```
 
-5. **Create a superuser (optional)**
+6. **Create a superuser (optional)**
    ```bash
    python manage.py createsuperuser
    ```
 
-6. **Run the development server**
+7. **Run the development server**
    ```bash
    python manage.py runserver
    ```
@@ -91,6 +97,9 @@ TaskManagementSystem/
 │   ├── tests.py           # Unit tests
 │   ├── urls.py            # User URLs
 │   └── views.py           # User views
+├── .env                   # Environment variables (not in git)
+├── .env.example           # Environment variables template
+├── .gitignore             # Git ignore file
 ├── db.sqlite3             # SQLite database
 ├── manage.py              # Django management script
 ├── Pipfile                # Pipenv dependencies
@@ -132,6 +141,26 @@ This project uses JWT (JSON Web Tokens) for authentication. The following endpoi
 - **Refresh Token Lifetime**: 1 day
 - **Algorithm**: HS256
 
+## 🔒 Security
+
+### Environment Variables
+
+- **Never commit `.env` files** to version control
+- Use `.env.example` as a template for required variables
+- Generate a new `SECRET_KEY` for production
+- Set `DEBUG=False` in production
+
+### Production Security Checklist
+
+- [ ] Change `SECRET_KEY` to a secure random value
+- [ ] Set `DEBUG=False`
+- [ ] Configure `ALLOWED_HOSTS` with your domain
+- [ ] Use HTTPS in production
+- [ ] Set up proper database credentials
+- [ ] Configure secure email backend if needed
+- [ ] Enable Django security middleware
+- [ ] Set up monitoring and logging
+
 ## 📚 API Endpoints
 
 ### Base URL: `http://localhost:8000/api/`
@@ -166,18 +195,45 @@ python manage.py test tasks
 
 ### Environment Variables
 
-For production deployment, consider setting the following environment variables:
+The project uses a `.env` file for configuration. Copy `.env.example` to `.env` and update the values:
 
-- `SECRET_KEY`: Django secret key
-- `DEBUG`: Set to `False` in production
-- `DATABASE_URL`: Database connection string
+```bash
+cp .env.example .env
+```
+
+**Key Environment Variables:**
+
+- `SECRET_KEY`: Django secret key (change for production)
+- `DEBUG`: Enable/disable debug mode
 - `ALLOWED_HOSTS`: Comma-separated list of allowed hosts
+- `DATABASE_ENGINE`: Database engine (sqlite3, postgresql, etc.)
+- `DATABASE_NAME`: Database name or path
+- `JWT_ACCESS_TOKEN_LIFETIME_MINUTES`: JWT access token lifetime
+- `JWT_REFRESH_TOKEN_LIFETIME_DAYS`: JWT refresh token lifetime
+
+### Database Configuration
+
+**Development (SQLite - Default)**:
+```env
+DATABASE_ENGINE=django.db.backends.sqlite3
+DATABASE_NAME=db.sqlite3
+```
+
+**Production (PostgreSQL)**:
+```env
+DATABASE_ENGINE=django.db.backends.postgresql
+DATABASE_NAME=your_database_name
+DATABASE_USER=your_database_user
+DATABASE_PASSWORD=your_database_password
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+```
 
 ### Settings
 
-Key settings can be found in `task_manager/settings.py`:
+Key settings are configurable via environment variables:
 
-- **Database**: SQLite for development (consider PostgreSQL for production)
+- **Database**: SQLite for development, PostgreSQL for production
 - **Pagination**: 10 items per page
 - **Authentication**: JWT with session authentication fallback
 - **Permissions**: Authenticated users only by default
