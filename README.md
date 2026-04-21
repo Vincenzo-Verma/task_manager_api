@@ -196,3 +196,62 @@ Future Enhancements (Optional)
  * Dockerization: Containerize the application for easier deployment.
  * CI/CD Pipeline: Set up a Continuous Integration/Continuous Deployment pipeline for automated testing and deployment.
  * Unit and Integration Tests: Write comprehensive tests for all API endpoints and business logic.
+
+---
+
+## Frontend (React + Vite)
+
+A production-style React frontend is included in [frontend](frontend) with:
+- Register and login flows
+- Protected dashboard route (JWT required)
+- Task CRUD (create, list, update, delete)
+- API success and error banners
+- Client-side validation with Zod
+- Input sanitization with DOMPurify
+- Token refresh flow using `/api/token/refresh/`
+
+### Frontend setup
+
+1. Install frontend dependencies:
+  ```bash
+  cd frontend
+  npm install
+  ```
+2. Create env file:
+  ```bash
+  cp .env.example .env
+  ```
+3. Start frontend:
+  ```bash
+  npm run dev
+  ```
+
+Default frontend URL: `http://127.0.0.1:5173`
+
+### Backend CORS setup
+
+`django-cors-headers` is now configured in Django settings. By default, these origins are allowed:
+- `http://localhost:5173`
+- `http://127.0.0.1:5173`
+
+You can override via environment variable:
+
+```bash
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
+
+### Security notes
+
+- Access token is kept in memory/session storage and added as `Bearer` auth header.
+- Refresh token is stored in local storage and used only to obtain a new access token.
+- If refresh fails, tokens are cleared and the user must log in again.
+
+### Optional Docker deployment (frontend)
+
+Use the included [frontend/Dockerfile](frontend/Dockerfile):
+
+```bash
+cd frontend
+docker build -t task-manager-frontend .
+docker run -p 8080:80 task-manager-frontend
+```

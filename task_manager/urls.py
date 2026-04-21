@@ -16,15 +16,34 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
+from django.views.generic import RedirectView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
 
+
+def api_root(_request):
+    return JsonResponse(
+        {
+            "message": "Task Manager API",
+            "endpoints": {
+                "register": "/api/users/",
+                "login": "/api/token/",
+                "token_refresh": "/api/token/refresh/",
+                "users": "/api/users/list/",
+                "tasks": "/api/tasks/",
+            },
+        }
+    )
+
 urlpatterns = [
+    path('', RedirectView.as_view(url='/api/', permanent=False), name='root_redirect'),
     path('admin/', admin.site.urls),
+    path('api/', api_root, name='api_root'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),

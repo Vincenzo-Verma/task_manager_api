@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Task
 from users.serializers import UserSerializer # To nest user data
+from django.contrib.auth.models import User
 
 class TaskSerializer(serializers.ModelSerializer):
     assigned_user = UserSerializer(read_only=True) # Nested serializer for assigned user
